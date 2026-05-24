@@ -1,0 +1,52 @@
+# --- Secrets ---
+# 楽天API/アフィリエイトIDなどの秘密情報。絶対にコミットしない。
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.venv/
+venv/
+env/
+
+# --- Project artifacts ---
+# 楽天APIのキャッシュ (検索結果が含まれる)
+.cache_rakuten/
+# 旧Yahoo!ショッピングAPIのキャッシュ
+.cache_yahoo/
+
+# 出力CSV (個人的なクエリ結果が含まれる可能性)
+*.csv
+
+# 比較データ JSON (collect コマンドで生成)
+comparison.json
+
+# 自動生成HTML → GitHub Pages 公開のため index.html はリポジトリに含める
+# (ローカルだけ別名で試す場合はここに追加)
+
+# X 投稿の重複防止ログ
+.post_log.json
+
+# ショップ別送料テーブル (個人設定のため必要に応じて)
+# 必要ならコメントアウトしてリポジトリ管理してOK
+shop_shipping.json
+
+# 一時スクリプト・スナップショット
+_discover*.py
+_discover_candidates.json
+_test_div.txt
+.snapshots/
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
