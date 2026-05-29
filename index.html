@@ -28,7 +28,7 @@
     <div class="flex flex-wrap items-center gap-2 mt-5 text-[11px] sm:text-xs">
       <span class="px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm font-bold">📊 22商品を比較</span>
       <span class="px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm font-bold">✅ 価格取得済み 22件</span>
-      <span class="px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm">🕒 最終更新 2026-05-30 06:28</span>
+      <span class="px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm">🕒 最終更新 2026-05-30 06:38</span>
     </div>
   </div>
 </header>
@@ -76,12 +76,13 @@
   .category-tab-active { background: #dc2626 !important; color: #fff !important; border-color: #dc2626 !important; box-shadow: 0 4px 14px rgba(220,38,38,.25); }
   .product-card { transition: opacity .2s ease, transform .2s ease; }
   .product-card.is-hidden { display: none !important; }
+  .series-block.is-hidden { display: none !important; }
 </style>
 <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-<h2 class="text-lg font-black text-gray-800 mb-1">全商品一覧（カテゴリ別・単価の安い順）</h2>
-<p class="text-xs text-gray-500 mb-4">同じカテゴリ内で単価が安い順に並んでいます。上のタブで絞り込めます。金額は楽天24の取得価格に基づきます。</p>
-<div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" id="product-grid">
-<article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+<h2 class="text-lg font-black text-gray-800 mb-1">シリーズ別 単価比較</h2>
+<p class="text-xs text-gray-500 mb-5">メーカー・シリーズごとにまとめ、同じシリーズ内の本体・詰め替え・種類違いを並べています。上のタブで絞り込めます。金額は楽天24の取得価格に基づきます。</p>
+<div id="product-grid">
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-sky-100"><h3 class="text-lg font-black text-gray-900">ファーファ</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 NSファーファ</span><span class="text-[11px] text-gray-400">液体洗濯洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥87.0 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-sky-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -110,8 +111,8 @@
       <a href="https://www.amazon.co.jp/s?k=4902135146591&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-sky-100"><h3 class="text-lg font-black text-gray-900">NANOX one</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 ライオン</span><span class="text-[11px] text-gray-400">液体洗濯洗剤 ・ 2種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥109.3 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 sm:grid-cols-2"><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-sky-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -142,6 +143,36 @@
   </div>
 </article>
 <article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+  <div class="h-1.5 bg-sky-400"></div>
+  <header class="px-5 pt-4 pb-3">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-1 rounded-full">🧺 液体洗濯洗剤</span>
+      <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
+    </div>
+    <h2 class="text-base font-extrabold text-gray-900 leading-snug">NANOX one つめかえ用 超特大 (1010g)</h2>
+    <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">液体洗濯洗剤 5位 / 8品</span></div>
+  </header>
+  <div class="px-5 pb-5 flex-1 flex flex-col">
+    <div class="rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 p-4">
+      <p class="text-[11px] text-gray-500 font-medium">内容量あたりの単価（客観指標）</p>
+      <p class="text-3xl font-black text-gray-900 tabular-nums mt-0.5">¥132.4 <span class='text-base font-bold text-gray-400'>/100g</span></p>
+      <div class="mt-3"><div class="flex items-center justify-between text-[10px] text-gray-400 mb-1"><span>カテゴリ内 安い</span><span><span class="text-slate-500 font-bold">ほぼ平均</span></span><span>高い</span></div><div class="relative h-2 rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400"><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-3.5 rounded-full bg-slate-700/40" style="left:36%"></span><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-gray-800 shadow" style="left:37%"></span></div></div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-2 mt-3 text-xs">
+      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 flex justify-between"><span class="text-gray-500">本体価格 ・ 1010g</span> <b class="text-gray-800">¥1,337</b></div>
+      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2"><span class="text-gray-500">1回あたり目安</span> <b class="text-gray-800">¥12.9</b><span class="text-[10px] text-gray-400"> /洗濯1回（約9.7g/回）</span></div>
+    </div>
+    
+    <div class="mt-3"><div><div class="flex items-center justify-between text-[10px] text-gray-400 mb-0.5"><span>価格推移（楽天24・2日）</span><span class="text-gray-400">変動なし</span></div><svg viewBox="0 0 220 48" class="w-full h-10" preserveAspectRatio="none" role="img" aria-label="価格推移"><polygon points="4,44 4.0,44.0 216.0,44.0 216.0,44" fill="rgba(22,163,74,.08)" /><polyline points="4.0,44.0 216.0,44.0" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="216.0" cy="44.0" r="3" fill="#16a34a" /></svg></div></div>
+    <p class="text-xs text-gray-600 mt-3 leading-relaxed flex-1">買い時判定には価格履歴が5日分必要です（現在2日分）。毎日記録して精度を上げています。</p>
+    <div class="mt-4 space-y-2">
+      <a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FNANOX%2520one%2520%25E3%2581%25A4%25E3%2582%2581%25E3%2581%258B%25E3%2581%2588%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2FNANOX%2520one%2520%25E3%2581%25A4%25E3%2582%2581%25E3%2581%258B%25E3%2581%2588%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 w-full text-sm py-3">楽天24で見る →</a>
+      <a href="https://www.amazon.co.jp/s?k=4903301350637&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
+    </div>
+  </div>
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-sky-100"><h3 class="text-lg font-black text-gray-900">アタックZERO</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 花王</span><span class="text-[11px] text-gray-400">液体洗濯洗剤 ・ 2種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥112.0 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 sm:grid-cols-2"><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-sky-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -200,38 +231,8 @@
       <a href="https://www.amazon.co.jp/s?k=4901301363725&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
-  <div class="h-1.5 bg-sky-400"></div>
-  <header class="px-5 pt-4 pb-3">
-    <div class="flex items-center justify-between gap-2 mb-2">
-      <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-1 rounded-full">🧺 液体洗濯洗剤</span>
-      <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
-    </div>
-    <h2 class="text-base font-extrabold text-gray-900 leading-snug">NANOX one つめかえ用 超特大 (1010g)</h2>
-    <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">液体洗濯洗剤 5位 / 8品</span></div>
-  </header>
-  <div class="px-5 pb-5 flex-1 flex flex-col">
-    <div class="rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 p-4">
-      <p class="text-[11px] text-gray-500 font-medium">内容量あたりの単価（客観指標）</p>
-      <p class="text-3xl font-black text-gray-900 tabular-nums mt-0.5">¥132.4 <span class='text-base font-bold text-gray-400'>/100g</span></p>
-      <div class="mt-3"><div class="flex items-center justify-between text-[10px] text-gray-400 mb-1"><span>カテゴリ内 安い</span><span><span class="text-slate-500 font-bold">ほぼ平均</span></span><span>高い</span></div><div class="relative h-2 rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400"><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-3.5 rounded-full bg-slate-700/40" style="left:36%"></span><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-gray-800 shadow" style="left:37%"></span></div></div>
-    </div>
-    
-    <div class="grid grid-cols-1 gap-2 mt-3 text-xs">
-      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 flex justify-between"><span class="text-gray-500">本体価格 ・ 1010g</span> <b class="text-gray-800">¥1,337</b></div>
-      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2"><span class="text-gray-500">1回あたり目安</span> <b class="text-gray-800">¥12.9</b><span class="text-[10px] text-gray-400"> /洗濯1回（約9.7g/回）</span></div>
-    </div>
-    
-    <div class="mt-3"><div><div class="flex items-center justify-between text-[10px] text-gray-400 mb-0.5"><span>価格推移（楽天24・2日）</span><span class="text-gray-400">変動なし</span></div><svg viewBox="0 0 220 48" class="w-full h-10" preserveAspectRatio="none" role="img" aria-label="価格推移"><polygon points="4,44 4.0,44.0 216.0,44.0 216.0,44" fill="rgba(22,163,74,.08)" /><polyline points="4.0,44.0 216.0,44.0" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="216.0" cy="44.0" r="3" fill="#16a34a" /></svg></div></div>
-    <p class="text-xs text-gray-600 mt-3 leading-relaxed flex-1">買い時判定には価格履歴が5日分必要です（現在2日分）。毎日記録して精度を上げています。</p>
-    <div class="mt-4 space-y-2">
-      <a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FNANOX%2520one%2520%25E3%2581%25A4%25E3%2582%2581%25E3%2581%258B%25E3%2581%2588%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2FNANOX%2520one%2520%25E3%2581%25A4%25E3%2582%2581%25E3%2581%258B%25E3%2581%2588%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 w-full text-sm py-3">楽天24で見る →</a>
-      <a href="https://www.amazon.co.jp/s?k=4903301350637&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
-    </div>
-  </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-sky-100"><h3 class="text-lg font-black text-gray-900">アリエール</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 P&amp;G</span><span class="text-[11px] text-gray-400">液体洗濯洗剤 ・ 2種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥134.7 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 sm:grid-cols-2"><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-sky-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -268,36 +269,6 @@
       <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-1 rounded-full">🧺 液体洗濯洗剤</span>
       <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
     </div>
-    <h2 class="text-base font-extrabold text-gray-900 leading-snug">ボールド 液体 本体 (680g)</h2>
-    <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">液体洗濯洗剤 7位 / 8品</span></div>
-  </header>
-  <div class="px-5 pb-5 flex-1 flex flex-col">
-    <div class="rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 p-4">
-      <p class="text-[11px] text-gray-500 font-medium">内容量あたりの単価（客観指標）</p>
-      <p class="text-3xl font-black text-gray-900 tabular-nums mt-0.5">¥144.1 <span class='text-base font-bold text-gray-400'>/100g</span></p>
-      <div class="mt-3"><div class="flex items-center justify-between text-[10px] text-gray-400 mb-1"><span>カテゴリ内 安い</span><span><span class="text-slate-500 font-bold">平均より10%高い</span></span><span>高い</span></div><div class="relative h-2 rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400"><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-3.5 rounded-full bg-slate-700/40" style="left:36%"></span><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-gray-800 shadow" style="left:46%"></span></div></div>
-    </div>
-    
-    <div class="grid grid-cols-1 gap-2 mt-3 text-xs">
-      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 flex justify-between"><span class="text-gray-500">本体価格 ・ 680g</span> <b class="text-gray-800">¥980</b></div>
-      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2"><span class="text-gray-500">1回あたり目安</span> <b class="text-gray-800">¥19.6</b><span class="text-[10px] text-gray-400"> /洗濯1回（約13.6g/回）</span></div>
-    </div>
-    
-    <div class="mt-3"><div><div class="flex items-center justify-between text-[10px] text-gray-400 mb-0.5"><span>価格推移（楽天24・3日）</span><span class="text-red-600 font-bold">▲ ¥333</span></div><svg viewBox="0 0 220 48" class="w-full h-10" preserveAspectRatio="none" role="img" aria-label="価格推移"><polygon points="4,44 4.0,44.0 110.0,4.0 216.0,4.0 216.0,44" fill="rgba(220,38,38,.08)" /><polyline points="4.0,44.0 110.0,4.0 216.0,4.0" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="216.0" cy="4.0" r="3" fill="#dc2626" /></svg></div></div>
-    <p class="text-xs text-gray-600 mt-3 leading-relaxed flex-1">買い時判定には価格履歴が5日分必要です（現在3日分）。毎日記録して精度を上げています。</p>
-    <div class="mt-4 space-y-2">
-      <a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%259C%25E3%2583%25BC%25E3%2583%25AB%25E3%2583%2589%2520%25E6%25B6%25B2%25E4%25BD%2593%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%259C%25E3%2583%25BC%25E3%2583%25AB%25E3%2583%2589%2520%25E6%25B6%25B2%25E4%25BD%2593%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 w-full text-sm py-3">楽天24で見る →</a>
-      <a href="https://www.amazon.co.jp/s?k=4902430909501&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
-    </div>
-  </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
-  <div class="h-1.5 bg-sky-400"></div>
-  <header class="px-5 pt-4 pb-3">
-    <div class="flex items-center justify-between gap-2 mb-2">
-      <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-1 rounded-full">🧺 液体洗濯洗剤</span>
-      <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
-    </div>
     <h2 class="text-base font-extrabold text-gray-900 leading-snug">アリエール MiRAi 超濃縮 液体 詰替 (800g)</h2>
     <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">液体洗濯洗剤 8位 / 8品</span></div>
   </header>
@@ -320,8 +291,38 @@
       <a href="https://www.amazon.co.jp/s?k=4902430937955&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-sky-100"><h3 class="text-lg font-black text-gray-900">ボールド</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 P&amp;G</span><span class="text-[11px] text-gray-400">液体洗濯洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥144.1 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+  <div class="h-1.5 bg-sky-400"></div>
+  <header class="px-5 pt-4 pb-3">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-1 rounded-full">🧺 液体洗濯洗剤</span>
+      <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
+    </div>
+    <h2 class="text-base font-extrabold text-gray-900 leading-snug">ボールド 液体 本体 (680g)</h2>
+    <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">液体洗濯洗剤 7位 / 8品</span></div>
+  </header>
+  <div class="px-5 pb-5 flex-1 flex flex-col">
+    <div class="rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 p-4">
+      <p class="text-[11px] text-gray-500 font-medium">内容量あたりの単価（客観指標）</p>
+      <p class="text-3xl font-black text-gray-900 tabular-nums mt-0.5">¥144.1 <span class='text-base font-bold text-gray-400'>/100g</span></p>
+      <div class="mt-3"><div class="flex items-center justify-between text-[10px] text-gray-400 mb-1"><span>カテゴリ内 安い</span><span><span class="text-slate-500 font-bold">平均より10%高い</span></span><span>高い</span></div><div class="relative h-2 rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400"><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-3.5 rounded-full bg-slate-700/40" style="left:36%"></span><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-gray-800 shadow" style="left:46%"></span></div></div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-2 mt-3 text-xs">
+      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 flex justify-between"><span class="text-gray-500">本体価格 ・ 680g</span> <b class="text-gray-800">¥980</b></div>
+      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2"><span class="text-gray-500">1回あたり目安</span> <b class="text-gray-800">¥19.6</b><span class="text-[10px] text-gray-400"> /洗濯1回（約13.6g/回）</span></div>
+    </div>
+    
+    <div class="mt-3"><div><div class="flex items-center justify-between text-[10px] text-gray-400 mb-0.5"><span>価格推移（楽天24・3日）</span><span class="text-red-600 font-bold">▲ ¥333</span></div><svg viewBox="0 0 220 48" class="w-full h-10" preserveAspectRatio="none" role="img" aria-label="価格推移"><polygon points="4,44 4.0,44.0 110.0,4.0 216.0,4.0 216.0,44" fill="rgba(220,38,38,.08)" /><polyline points="4.0,44.0 110.0,4.0 216.0,4.0" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="216.0" cy="4.0" r="3" fill="#dc2626" /></svg></div></div>
+    <p class="text-xs text-gray-600 mt-3 leading-relaxed flex-1">買い時判定には価格履歴が5日分必要です（現在3日分）。毎日記録して精度を上げています。</p>
+    <div class="mt-4 space-y-2">
+      <a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%259C%25E3%2583%25BC%25E3%2583%25AB%25E3%2583%2589%2520%25E6%25B6%25B2%25E4%25BD%2593%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%259C%25E3%2583%25BC%25E3%2583%25AB%25E3%2583%2589%2520%25E6%25B6%25B2%25E4%25BD%2593%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 w-full text-sm py-3">楽天24で見る →</a>
+      <a href="https://www.amazon.co.jp/s?k=4902430909501&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
+    </div>
+  </div>
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-indigo-100"><h3 class="text-lg font-black text-gray-900">アタック（粉末）</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 花王</span><span class="text-[11px] text-gray-400">粉末洗濯洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥62.8 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-indigo-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -350,8 +351,8 @@
       <a href="https://www.amazon.co.jp/s?k=4901301017833&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-indigo-100"><h3 class="text-lg font-black text-gray-900">トップ</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 ライオン</span><span class="text-[11px] text-gray-400">粉末洗濯洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥67.4 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-indigo-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -380,8 +381,8 @@
       <a href="https://www.amazon.co.jp/s?k=4903301228714&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
+</article></div></section>
+<section class="series-block mb-8" data-category="laundry"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-indigo-100"><h3 class="text-lg font-black text-gray-900">ファーファ</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 NSファーファ</span><span class="text-[11px] text-gray-400">粉末洗濯洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥109.2 <span class='text-base font-bold text-gray-400'>/100g</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="laundry">
   <div class="h-1.5 bg-indigo-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -410,8 +411,8 @@
       <a href="https://www.amazon.co.jp/s?k=4902135157054&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="dish">
+</article></div></section>
+<section class="series-block mb-8" data-category="dish"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-emerald-100"><h3 class="text-lg font-black text-gray-900">キュキュット</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 花王</span><span class="text-[11px] text-gray-400">食器用洗剤 ・ 2種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥78.3 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 sm:grid-cols-2"><article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="dish">
   <div class="h-1.5 bg-emerald-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -448,36 +449,6 @@
       <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">🍽️ 食器用洗剤</span>
       <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
     </div>
-    <h2 class="text-base font-extrabold text-gray-900 leading-snug">ジョイ W除菌 食器用 逆さボトル さわやか微香 本体 (290ml)</h2>
-    <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">食器用洗剤 2位 / 4品</span></div>
-  </header>
-  <div class="px-5 pb-5 flex-1 flex flex-col">
-    <div class="rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 p-4">
-      <p class="text-[11px] text-gray-500 font-medium">内容量あたりの単価（客観指標）</p>
-      <p class="text-3xl font-black text-gray-900 tabular-nums mt-0.5">¥136.6 <span class='text-base font-bold text-gray-400'>/100ml</span></p>
-      <div class="mt-3"><div class="flex items-center justify-between text-[10px] text-gray-400 mb-1"><span>カテゴリ内 安い</span><span><span class="text-emerald-600 font-bold">平均より5%安い</span></span><span>高い</span></div><div class="relative h-2 rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400"><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-3.5 rounded-full bg-slate-700/40" style="left:53%"></span><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-gray-800 shadow" style="left:48%"></span></div></div>
-    </div>
-    
-    <div class="grid grid-cols-1 gap-2 mt-3 text-xs">
-      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 flex justify-between"><span class="text-gray-500">本体価格 ・ 290ml</span> <b class="text-gray-800">¥396</b></div>
-      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2"><span class="text-gray-500">1回あたり目安</span> <b class="text-gray-800">¥2.7</b><span class="text-[10px] text-gray-400"> /食器10枚（約2ml/回）</span></div>
-    </div>
-    
-    <div class="mt-3"><div><div class="flex items-center justify-between text-[10px] text-gray-400 mb-0.5"><span>価格推移（楽天24・2日）</span><span class="text-gray-400">変動なし</span></div><svg viewBox="0 0 220 48" class="w-full h-10" preserveAspectRatio="none" role="img" aria-label="価格推移"><polygon points="4,44 4.0,44.0 216.0,44.0 216.0,44" fill="rgba(22,163,74,.08)" /><polyline points="4.0,44.0 216.0,44.0" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="216.0" cy="44.0" r="3" fill="#16a34a" /></svg></div></div>
-    <p class="text-xs text-gray-600 mt-3 leading-relaxed flex-1">買い時判定には価格履歴が5日分必要です（現在2日分）。毎日記録して精度を上げています。</p>
-    <div class="mt-4 space-y-2">
-      <a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B8%25E3%2583%25A7%25E3%2582%25A4%2520%25E9%25A3%259F%25E5%2599%25A8%25E7%2594%25A8%25E6%25B4%2597%25E5%2589%25A4%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B8%25E3%2583%25A7%25E3%2582%25A4%2520%25E9%25A3%259F%25E5%2599%25A8%25E7%2594%25A8%25E6%25B4%2597%25E5%2589%25A4%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 w-full text-sm py-3">楽天24で見る →</a>
-      <a href="https://www.amazon.co.jp/s?k=4902430754026&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
-    </div>
-  </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="dish">
-  <div class="h-1.5 bg-emerald-400"></div>
-  <header class="px-5 pt-4 pb-3">
-    <div class="flex items-center justify-between gap-2 mb-2">
-      <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">🍽️ 食器用洗剤</span>
-      <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
-    </div>
     <h2 class="text-base font-extrabold text-gray-900 leading-snug">キュキュット クリア泡スプレー 無香性 本体 (280ml)</h2>
     <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">食器用洗剤 3位 / 4品</span></div>
   </header>
@@ -500,8 +471,38 @@
       <a href="https://www.amazon.co.jp/s?k=4901301273796&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="dish">
+</article></div></section>
+<section class="series-block mb-8" data-category="dish"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-emerald-100"><h3 class="text-lg font-black text-gray-900">ジョイ</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 P&amp;G</span><span class="text-[11px] text-gray-400">食器用洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥136.6 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="dish">
+  <div class="h-1.5 bg-emerald-400"></div>
+  <header class="px-5 pt-4 pb-3">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">🍽️ 食器用洗剤</span>
+      <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border bg-sky-100 text-sky-700 border-sky-200">価格データ収集中</span>
+    </div>
+    <h2 class="text-base font-extrabold text-gray-900 leading-snug">ジョイ W除菌 食器用 逆さボトル さわやか微香 本体 (290ml)</h2>
+    <div class="mt-2"><span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">食器用洗剤 2位 / 4品</span></div>
+  </header>
+  <div class="px-5 pb-5 flex-1 flex flex-col">
+    <div class="rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 p-4">
+      <p class="text-[11px] text-gray-500 font-medium">内容量あたりの単価（客観指標）</p>
+      <p class="text-3xl font-black text-gray-900 tabular-nums mt-0.5">¥136.6 <span class='text-base font-bold text-gray-400'>/100ml</span></p>
+      <div class="mt-3"><div class="flex items-center justify-between text-[10px] text-gray-400 mb-1"><span>カテゴリ内 安い</span><span><span class="text-emerald-600 font-bold">平均より5%安い</span></span><span>高い</span></div><div class="relative h-2 rounded-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400"><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-3.5 rounded-full bg-slate-700/40" style="left:53%"></span><span class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-gray-800 shadow" style="left:48%"></span></div></div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-2 mt-3 text-xs">
+      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 flex justify-between"><span class="text-gray-500">本体価格 ・ 290ml</span> <b class="text-gray-800">¥396</b></div>
+      <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2"><span class="text-gray-500">1回あたり目安</span> <b class="text-gray-800">¥2.7</b><span class="text-[10px] text-gray-400"> /食器10枚（約2ml/回）</span></div>
+    </div>
+    
+    <div class="mt-3"><div><div class="flex items-center justify-between text-[10px] text-gray-400 mb-0.5"><span>価格推移（楽天24・2日）</span><span class="text-gray-400">変動なし</span></div><svg viewBox="0 0 220 48" class="w-full h-10" preserveAspectRatio="none" role="img" aria-label="価格推移"><polygon points="4,44 4.0,44.0 216.0,44.0 216.0,44" fill="rgba(22,163,74,.08)" /><polyline points="4.0,44.0 216.0,44.0" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="216.0" cy="44.0" r="3" fill="#16a34a" /></svg></div></div>
+    <p class="text-xs text-gray-600 mt-3 leading-relaxed flex-1">買い時判定には価格履歴が5日分必要です（現在2日分）。毎日記録して精度を上げています。</p>
+    <div class="mt-4 space-y-2">
+      <a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B8%25E3%2583%25A7%25E3%2582%25A4%2520%25E9%25A3%259F%25E5%2599%25A8%25E7%2594%25A8%25E6%25B4%2597%25E5%2589%25A4%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B8%25E3%2583%25A7%25E3%2582%25A4%2520%25E9%25A3%259F%25E5%2599%25A8%25E7%2594%25A8%25E6%25B4%2597%25E5%2589%25A4%2520%25E6%259C%25AC%25E4%25BD%2593%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 w-full text-sm py-3">楽天24で見る →</a>
+      <a href="https://www.amazon.co.jp/s?k=4902430754026&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
+    </div>
+  </div>
+</article></div></section>
+<section class="series-block mb-8" data-category="dish"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-emerald-100"><h3 class="text-lg font-black text-gray-900">チャーミー マジカ</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 ライオン</span><span class="text-[11px] text-gray-400">食器用洗剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥200.5 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="dish">
   <div class="h-1.5 bg-emerald-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -530,8 +531,8 @@
       <a href="https://www.amazon.co.jp/s?k=4903301262398&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="body_soap">
+</article></div></section>
+<section class="series-block mb-8" data-category="body_soap"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-rose-100"><h3 class="text-lg font-black text-gray-900">ビオレu</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 花王</span><span class="text-[11px] text-gray-400">ボディソープ ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥157.7 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="body_soap">
   <div class="h-1.5 bg-rose-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -560,8 +561,8 @@
       <a href="https://www.amazon.co.jp/s?k=4901301284488&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="body_soap">
+</article></div></section>
+<section class="series-block mb-8" data-category="body_soap"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-rose-100"><h3 class="text-lg font-black text-gray-900">ミノン</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 第一三共ヘルスケア</span><span class="text-[11px] text-gray-400">ボディソープ ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥390.4 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="body_soap">
   <div class="h-1.5 bg-rose-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -590,8 +591,8 @@
       <a href="https://www.amazon.co.jp/s?k=4987107616579&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="fabric_softener">
+</article></div></section>
+<section class="series-block mb-8" data-category="fabric_softener"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-violet-100"><h3 class="text-lg font-black text-gray-900">レノア</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 P&amp;G</span><span class="text-[11px] text-gray-400">柔軟剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥91.7 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="fabric_softener">
   <div class="h-1.5 bg-violet-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -620,8 +621,8 @@
       <a href="https://www.amazon.co.jp/s?k=4902430909235&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="fabric_softener">
+</article></div></section>
+<section class="series-block mb-8" data-category="fabric_softener"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-violet-100"><h3 class="text-lg font-black text-gray-900">ソフラン</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 ライオン</span><span class="text-[11px] text-gray-400">柔軟剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥94.0 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="fabric_softener">
   <div class="h-1.5 bg-violet-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -650,8 +651,8 @@
       <a href="https://www.amazon.co.jp/s?k=4901301366107&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="fabric_softener">
+</article></div></section>
+<section class="series-block mb-8" data-category="fabric_softener"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-violet-100"><h3 class="text-lg font-black text-gray-900">ハミング フレア</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 花王</span><span class="text-[11px] text-gray-400">柔軟剤 ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥94.3 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="fabric_softener">
   <div class="h-1.5 bg-violet-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -680,8 +681,8 @@
       <a href="https://www.amazon.co.jp/s?k=4901301408457&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="bath_toilet">
+</article></div></section>
+<section class="series-block mb-8" data-category="bath_toilet"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-cyan-100"><h3 class="text-lg font-black text-gray-900">トイレマジックリン</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 花王</span><span class="text-[11px] text-gray-400">浴室・トイレ ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥110.2 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm ring-2 ring-amber-300 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="bath_toilet">
   <div class="h-1.5 bg-cyan-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -710,8 +711,8 @@
       <a href="https://www.amazon.co.jp/s?k=4901301279969&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
-<article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="bath_toilet">
+</article></div></section>
+<section class="series-block mb-8" data-category="bath_toilet"><div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-cyan-100"><h3 class="text-lg font-black text-gray-900">ルックプラス</h3><span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 ライオン</span><span class="text-[11px] text-gray-400">浴室・トイレ ・ 1種類</span><span class="ml-auto"><span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">¥110.4 <span class='text-base font-bold text-gray-400'>/100ml</span></b></span></span></div><div class="grid gap-5 "><article class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-category="bath_toilet">
   <div class="h-1.5 bg-cyan-400"></div>
   <header class="px-5 pt-4 pb-3">
     <div class="flex items-center justify-between gap-2 mb-2">
@@ -740,12 +741,12 @@
       <a href="https://www.amazon.co.jp/s?k=4902880201367&amp;tag=duckgain17-22" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-slate-700 w-full text-xs py-2">Amazonで価格を見る</a>
     </div>
   </div>
-</article>
+</article></div></section>
 </div>
 </main>
 <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10"><div class="rounded-3xl bg-gradient-to-b from-amber-50 to-orange-50 border border-amber-200 p-6 sm:p-8"><div class="flex items-start gap-3 mb-6"><span class="text-3xl shrink-0">🛒</span><div><h2 class="text-xl font-black text-gray-900">あと一息で送料無料！390円均一・調整用お宝リスト</h2><p class="text-sm text-gray-600 mt-1">3,980円ラインにあと数百円足りない時、カゴに放り込めるバイヤー厳選の消耗品。すべて楽天24店内検索です。</p></div></div><div class="grid gap-3 sm:grid-cols-2"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl bg-white border border-amber-100 p-4 shadow-sm hover:shadow-md transition-shadow"><div><span class="inline-block text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 mb-1">あと200円</span><p class="text-sm font-bold text-gray-900">オーエ 不織布キッチンスポンジ</p><p class="text-[11px] text-gray-500 mt-0.5">390円均一ゾーン｜腐らない調整用お宝</p></div><a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25AA%25E3%2583%25BC%25E3%2582%25A8%2520%25E4%25B8%258D%25E7%25B9%2594%25E5%25B8%2583%2520%25E3%2582%25AD%25E3%2583%2583%25E3%2583%2581%25E3%2583%25B3%25E3%2582%25B9%25E3%2583%259D%25E3%2583%25B3%25E3%2582%25B8%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25AA%25E3%2583%25BC%25E3%2582%25A8%2520%25E4%25B8%258D%25E7%25B9%2594%25E5%25B8%2583%2520%25E3%2582%25AD%25E3%2583%2583%25E3%2583%2581%25E3%2583%25B3%25E3%2582%25B9%25E3%2583%259D%25E3%2583%25B3%25E3%2582%25B8%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 shrink-0 px-4 py-2 text-xs">楽天24で探す</a></div><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl bg-white border border-amber-100 p-4 shadow-sm hover:shadow-md transition-shadow"><div><span class="inline-block text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 mb-1">あと300円</span><p class="text-sm font-bold text-gray-900">エリエール Plus+キレイ ペーパーハンドタオル</p><p class="text-[11px] text-gray-500 mt-0.5">390円均一ゾーン｜腐らない調整用お宝</p></div><a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25A8%25E3%2583%25AA%25E3%2582%25A8%25E3%2583%25BC%25E3%2583%25AB%2520Plus%2520%25E3%2582%25AD%25E3%2583%25AC%25E3%2582%25A4%2520%25E3%2583%259A%25E3%2583%25BC%25E3%2583%2591%25E3%2583%25BC%25E3%2583%258F%25E3%2583%25B3%25E3%2583%2589%25E3%2582%25BF%25E3%2582%25AA%25E3%2583%25AB%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25A8%25E3%2583%25AA%25E3%2582%25A8%25E3%2583%25BC%25E3%2583%25AB%2520Plus%2520%25E3%2582%25AD%25E3%2583%25AC%25E3%2582%25A4%2520%25E3%2583%259A%25E3%2583%25BC%25E3%2583%2591%25E3%2583%25BC%25E3%2583%258F%25E3%2583%25B3%25E3%2583%2589%25E3%2582%25BF%25E3%2582%25AA%25E3%2583%25AB%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 shrink-0 px-4 py-2 text-xs">楽天24で探す</a></div><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl bg-white border border-amber-100 p-4 shadow-sm hover:shadow-md transition-shadow"><div><span class="inline-block text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 mb-1">あと400円</span><p class="text-sm font-bold text-gray-900">レック 激落ちくん メラミンスポンジ大容量</p><p class="text-[11px] text-gray-500 mt-0.5">390円均一ゾーン｜腐らない調整用お宝</p></div><a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%25AC%25E3%2583%2583%25E3%2582%25AF%2520%25E6%25BF%2580%25E8%2590%25BD%25E3%2581%25A1%25E3%2581%258F%25E3%2582%2593%2520%25E3%2583%25A1%25E3%2583%25A9%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B9%25E3%2583%259D%25E3%2583%25B3%25E3%2582%25B8%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%25AC%25E3%2583%2583%25E3%2582%25AF%2520%25E6%25BF%2580%25E8%2590%25BD%25E3%2581%25A1%25E3%2581%258F%25E3%2582%2593%2520%25E3%2583%25A1%25E3%2583%25A9%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B9%25E3%2583%259D%25E3%2583%25B3%25E3%2582%25B8%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 shrink-0 px-4 py-2 text-xs">楽天24で探す</a></div><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl bg-white border border-amber-100 p-4 shadow-sm hover:shadow-md transition-shadow"><div><span class="inline-block text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 mb-1">あと500円</span><p class="text-sm font-bold text-gray-900">クレハ NEWクレラップ（30cm×20m）</p><p class="text-[11px] text-gray-500 mt-0.5">390円均一ゾーン｜腐らない調整用お宝</p></div><a href="https://hb.afl.rakuten.co.jp/hgc/5369a3fc.3d0ba33e.5369a3fd.1ba5b812/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%258F%2520NEW%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%25A9%25E3%2583%2583%25E3%2583%2597%252030cm%252020m%2F%3Fsid%3D203677&amp;m=http%3A%2F%2Fm.search.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%258F%2520NEW%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%25A9%25E3%2583%2583%25E3%2583%2597%252030cm%252020m%2F%3Fsid%3D203677" target="_blank" rel="nofollow sponsored noopener" class="text-center text-xs px-3 py-2 rounded-lg font-bold text-white shadow-sm hover:opacity-90 bg-red-600 shrink-0 px-4 py-2 text-xs">楽天24で探す</a></div></div></div></section>
 <footer class="max-w-6xl mx-auto px-4 sm:px-6 py-10 text-center text-xs text-gray-500 space-y-2">
-<p>※ 価格は取得時点（2026-05-30 06:28）のものです。購入前に各ショップの表示価格・送料・在庫を必ずご確認ください。</p>
+<p>※ 価格は取得時点（2026-05-30 06:38）のものです。購入前に各ショップの表示価格・送料・在庫を必ずご確認ください。</p>
 <p>※ 単位価格は価格÷内容量で算出した客観指標、1回あたりは標準使用量に基づく目安です。</p>
 <p>※ 当ページのリンクはアフィリエイト広告を含みます。</p></footer>
 <script>
@@ -754,18 +755,18 @@
     var tabs = document.querySelectorAll('.category-tab');
     var countEl = document.getElementById('category-tab-count');
     function applyTab(tab) {
-      var cards = document.querySelectorAll('.product-card');
-      var visible = 0;
-      cards.forEach(function(card) {
-        var cat = card.getAttribute('data-category') || '';
+      var blocks = document.querySelectorAll('.series-block');
+      var products = 0, series = 0;
+      blocks.forEach(function(block) {
+        var cat = block.getAttribute('data-category') || '';
         var show = tab === 'all' || cat === tab;
-        card.classList.toggle('is-hidden', !show);
-        if (show) visible++;
+        block.classList.toggle('is-hidden', !show);
+        if (show) { series++; products += block.querySelectorAll('.product-card').length; }
       });
       tabs.forEach(function(btn) {
         btn.classList.toggle('category-tab-active', btn.getAttribute('data-tab') === tab);
       });
-      if (countEl) countEl.textContent = visible + ' 件表示中';
+      if (countEl) countEl.textContent = series + 'シリーズ / ' + products + '商品を表示中';
     }
     tabs.forEach(function(btn) {
       btn.addEventListener('click', function() { applyTab(btn.getAttribute('data-tab')); });

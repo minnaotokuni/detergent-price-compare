@@ -166,6 +166,8 @@ class TargetProduct:
     category_key: str
     jan: str
     total_shares: float
+    maker: str = ""
+    series: str = ""
     size_value: float = 0.0
     size_unit: str = ""
     dose_label: str = ""
@@ -556,6 +558,8 @@ def load_targets(path: Path = TARGET_PRODUCTS_PATH) -> list[TargetProduct]:
                 category_key=str(entry.get("category_key") or "laundry_liquid"),
                 jan=jan,
                 total_shares=total_shares,
+                maker=str(entry.get("maker") or "").strip(),
+                series=str(entry.get("series") or "").strip(),
                 size_value=size_value,
                 size_unit=size_unit,
                 dose_label=str(entry.get("dose_label") or "").strip(),
@@ -865,6 +869,7 @@ def render_category_tabs() -> str:
   .category-tab-active {{ background: #dc2626 !important; color: #fff !important; border-color: #dc2626 !important; box-shadow: 0 4px 14px rgba(220,38,38,.25); }}
   .product-card {{ transition: opacity .2s ease, transform .2s ease; }}
   .product-card.is-hidden {{ display: none !important; }}
+  .series-block.is-hidden {{ display: none !important; }}
 </style>
 """.strip()
 
@@ -876,18 +881,18 @@ CATEGORY_FILTER_SCRIPT = """
     var tabs = document.querySelectorAll('.category-tab');
     var countEl = document.getElementById('category-tab-count');
     function applyTab(tab) {
-      var cards = document.querySelectorAll('.product-card');
-      var visible = 0;
-      cards.forEach(function(card) {
-        var cat = card.getAttribute('data-category') || '';
+      var blocks = document.querySelectorAll('.series-block');
+      var products = 0, series = 0;
+      blocks.forEach(function(block) {
+        var cat = block.getAttribute('data-category') || '';
         var show = tab === 'all' || cat === tab;
-        card.classList.toggle('is-hidden', !show);
-        if (show) visible++;
+        block.classList.toggle('is-hidden', !show);
+        if (show) { series++; products += block.querySelectorAll('.product-card').length; }
       });
       tabs.forEach(function(btn) {
         btn.classList.toggle('category-tab-active', btn.getAttribute('data-tab') === tab);
       });
-      if (countEl) countEl.textContent = visible + ' 件表示中';
+      if (countEl) countEl.textContent = series + 'シリーズ / ' + products + '商品を表示中';
     }
     tabs.forEach(function(btn) {
       btn.addEventListener('click', function() { applyTab(btn.getAttribute('data-tab')); });
@@ -1332,19 +1337,67 @@ def render_card(analysis: ProductAnalysis) -> str:
     return card
 
 
-def generate_html(analyses: list[ProductAnalysis], out: Path = DEFAULT_HTML_PATH) -> None:
-    # g と ml は直接比較できないため、カテゴリ順→カテゴリ内で単価の安い順に並べる
-    # (各カードのランクバッジと並び順を一致させ、誤解を避ける)。
+def render_series_groups(analyses: list[ProductAnalysis]) -> str:
+    """『カテゴリ → シリーズ』でまとめ、同シリーズ内のバリエーションを並べて表示する。"""
     cat_order = {key: i for i, (key, _) in enumerate(CATEGORIES.items())}
-    ordered = sorted(
-        analyses,
-        key=lambda a: (
-            cat_order.get(a.snapshot.target.category_key, 99),
-            a.unit_price is None,
-            a.unit_price if a.unit_price is not None else math.inf,
-        ),
+
+    def sort_key(a: ProductAnalysis):
+        return (a.unit_price is None, a.unit_price if a.unit_price is not None else math.inf)
+
+    # (category_key, series) ごとにまとめる
+    groups: dict[tuple[str, str], list[ProductAnalysis]] = {}
+    for a in analyses:
+        t = a.snapshot.target
+        key = (t.category_key, t.series or t.display_name)
+        groups.setdefault(key, []).append(a)
+
+    # グループの並び: カテゴリ順 → シリーズ最安単価順
+    def group_min(items: list[ProductAnalysis]) -> float:
+        prices = [a.unit_price for a in items if a.unit_price is not None]
+        return min(prices) if prices else math.inf
+
+    ordered_keys = sorted(
+        groups.keys(),
+        key=lambda k: (cat_order.get(k[0], 99), group_min(groups[k])),
     )
-    cards = "\n".join(render_card(a) for a in ordered)
+
+    blocks: list[str] = []
+    for (cat_key, series) in ordered_keys:
+        items = sorted(groups[(cat_key, series)], key=sort_key)
+        ui = category_ui(cat_key)
+        accent = ui["accent"]
+        maker = items[0].snapshot.target.maker
+        tab_key = category_tab_key(cat_key)
+        prices = [a.unit_price for a in items if a.unit_price is not None]
+        cheapest = min(prices) if prices else None
+        basis = next((a.unit_basis for a in items if a.unit_price is not None), "100g")
+        n = len(items)
+        cheapest_txt = (
+            f'<span class="text-xs text-gray-500">シリーズ最安 <b class="text-gray-900">{fmt_unit_price(cheapest, basis)}</b></span>'
+            if cheapest is not None else ""
+        )
+        maker_chip = (
+            f'<span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 {html.escape(maker)}</span>'
+            if maker else ""
+        )
+        cards = "\n".join(render_card(a) for a in items)
+        cols = "sm:grid-cols-2 xl:grid-cols-3" if n >= 3 else ("sm:grid-cols-2" if n == 2 else "")
+        blocks.append(
+            f'<section class="series-block mb-8" data-category="{html.escape(tab_key)}">'
+            f'<div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-{accent}-100">'
+            f'<h3 class="text-lg font-black text-gray-900">{html.escape(series)}</h3>'
+            f'{maker_chip}'
+            f'<span class="text-[11px] text-gray-400">{html.escape(ui["label"])} ・ {n}種類</span>'
+            f'<span class="ml-auto">{cheapest_txt}</span>'
+            '</div>'
+            f'<div class="grid gap-5 {cols}">{cards}</div>'
+            '</section>'
+        )
+    return "\n".join(blocks)
+
+
+def generate_html(analyses: list[ProductAnalysis], out: Path = DEFAULT_HTML_PATH) -> None:
+    series_html = render_series_groups(analyses)
     updated = datetime.now().strftime("%Y-%m-%d %H:%M")
     method = render_method_section()
     drop_band = render_price_drop_band(analyses)
@@ -1402,10 +1455,10 @@ def generate_html(analyses: list[ProductAnalysis], out: Path = DEFAULT_HTML_PATH
 {variants}
 {tabs}
 <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-<h2 class="text-lg font-black text-gray-800 mb-1">全商品一覧（カテゴリ別・単価の安い順）</h2>
-<p class="text-xs text-gray-500 mb-4">同じカテゴリ内で単価が安い順に並んでいます。上のタブで絞り込めます。金額は楽天24の取得価格に基づきます。</p>
-<div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" id="product-grid">
-{cards or '<p class="text-gray-500 col-span-full">表示できる商品がありません。</p>'}
+<h2 class="text-lg font-black text-gray-800 mb-1">シリーズ別 単価比較</h2>
+<p class="text-xs text-gray-500 mb-5">メーカー・シリーズごとにまとめ、同じシリーズ内の本体・詰め替え・種類違いを並べています。上のタブで絞り込めます。金額は楽天24の取得価格に基づきます。</p>
+<div id="product-grid">
+{series_html or '<p class="text-gray-500">表示できる商品がありません。</p>'}
 </div>
 </main>
 {filler}
