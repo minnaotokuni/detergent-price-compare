@@ -843,7 +843,7 @@ def category_tab_key(category_key: str) -> str:
     return CATEGORY_TAB_MAP.get(category_key, category_key)
 
 
-def render_category_tabs() -> str:
+def render_category_tabs(makers: Optional[list[str]] = None) -> str:
     buttons: list[str] = []
     for tab_key, label in SITE_CATEGORY_TABS:
         active = " category-tab-active" if tab_key == "all" else ""
@@ -852,12 +852,30 @@ def render_category_tabs() -> str:
             f'class="category-tab shrink-0 px-4 py-2.5 rounded-full text-sm font-bold border transition-all duration-200{active}">'
             f"{html.escape(label)}</button>"
         )
+    maker_buttons: list[str] = []
+    maker_row = ""
+    if makers:
+        maker_buttons.append(
+            '<button type="button" data-maker="all" '
+            'class="maker-chip shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition-all duration-200 maker-chip-active">すべてのメーカー</button>'
+        )
+        for mk in makers:
+            maker_buttons.append(
+                f'<button type="button" data-maker="{html.escape(mk)}" '
+                f'class="maker-chip shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition-all duration-200">'
+                f"{html.escape(mk)}</button>"
+            )
+        maker_row = (
+            '<div class="flex gap-2 overflow-x-auto -mx-1 px-1 mt-2 scrollbar-hide" id="maker-chips">'
+            f'{"".join(maker_buttons)}</div>'
+        )
     return f"""
-<div class="sticky top-0 z-30 bg-slate-50/85 backdrop-blur-md border-b border-slate-200/70">
+<div class="sticky top-0 z-30 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/70">
 <section class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
   <div class="flex gap-2 overflow-x-auto -mx-1 px-1 scrollbar-hide" id="category-tabs" role="tablist">
     {''.join(buttons)}
   </div>
+  {maker_row}
   <p class="text-[11px] text-gray-400 mt-1.5 px-1" id="category-tab-count"></p>
 </section>
 </div>
@@ -867,6 +885,9 @@ def render_category_tabs() -> str:
   .category-tab {{ background: #fff; color: #64748b; border-color: #e2e8f0; }}
   .category-tab:hover {{ border-color: #fca5a5; color: #dc2626; }}
   .category-tab-active {{ background: #dc2626 !important; color: #fff !important; border-color: #dc2626 !important; box-shadow: 0 4px 14px rgba(220,38,38,.25); }}
+  .maker-chip {{ background: #fff; color: #64748b; border-color: #e2e8f0; }}
+  .maker-chip:hover {{ border-color: #94a3b8; color: #0f172a; }}
+  .maker-chip-active {{ background: #0f172a !important; color: #fff !important; border-color: #0f172a !important; }}
   .product-card {{ transition: opacity .2s ease, transform .2s ease; }}
   .product-card.is-hidden {{ display: none !important; }}
   .series-block.is-hidden {{ display: none !important; }}
@@ -877,32 +898,42 @@ def render_category_tabs() -> str:
 CATEGORY_FILTER_SCRIPT = """
 <script>
 (function() {
-  function initCategoryTabs() {
+  var state = { cat: 'all', maker: 'all' };
+  function initFilters() {
     var tabs = document.querySelectorAll('.category-tab');
+    var makers = document.querySelectorAll('.maker-chip');
     var countEl = document.getElementById('category-tab-count');
-    function applyTab(tab) {
+    function apply() {
       var blocks = document.querySelectorAll('.series-block');
       var products = 0, series = 0;
       blocks.forEach(function(block) {
         var cat = block.getAttribute('data-category') || '';
-        var show = tab === 'all' || cat === tab;
+        var mk = block.getAttribute('data-maker') || '';
+        var show = (state.cat === 'all' || cat === state.cat) &&
+                   (state.maker === 'all' || mk === state.maker);
         block.classList.toggle('is-hidden', !show);
         if (show) { series++; products += block.querySelectorAll('.product-card').length; }
       });
       tabs.forEach(function(btn) {
-        btn.classList.toggle('category-tab-active', btn.getAttribute('data-tab') === tab);
+        btn.classList.toggle('category-tab-active', btn.getAttribute('data-tab') === state.cat);
+      });
+      makers.forEach(function(btn) {
+        btn.classList.toggle('maker-chip-active', btn.getAttribute('data-maker') === state.maker);
       });
       if (countEl) countEl.textContent = series + 'シリーズ / ' + products + '商品を表示中';
     }
     tabs.forEach(function(btn) {
-      btn.addEventListener('click', function() { applyTab(btn.getAttribute('data-tab')); });
+      btn.addEventListener('click', function() { state.cat = btn.getAttribute('data-tab'); apply(); });
     });
-    applyTab('all');
+    makers.forEach(function(btn) {
+      btn.addEventListener('click', function() { state.maker = btn.getAttribute('data-maker'); apply(); });
+    });
+    apply();
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCategoryTabs);
+    document.addEventListener('DOMContentLoaded', initFilters);
   } else {
-    initCategoryTabs();
+    initFilters();
   }
 })();
 </script>
@@ -1337,6 +1368,39 @@ def render_card(analysis: ProductAnalysis) -> str:
     return card
 
 
+def series_insight_badge(items: list[ProductAnalysis]) -> str:
+    """シリーズ内の比較インサイトをバッジ化する。
+
+    本体/詰替の両方があればどちらが何%お得かを、無ければ最安と最高の差を示す。
+    """
+    priced = [a for a in items if a.unit_price is not None]
+    if len(priced) < 2:
+        return ""
+    by_type = {a.snapshot.target.variant_type: a for a in priced if a.snapshot.target.variant_type}
+    main, refill = by_type.get("main"), by_type.get("refill")
+    if main and refill and main.unit_price != refill.unit_price:
+        if refill.unit_price < main.unit_price:
+            pct = (main.unit_price - refill.unit_price) / main.unit_price * 100
+            return (
+                '<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">'
+                f'💡 詰め替えが {pct:.0f}% お得</span>'
+            )
+        pct = (refill.unit_price - main.unit_price) / refill.unit_price * 100
+        return (
+            '<span class="text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full">'
+            f'⚠️ 本体の方が {pct:.0f}% 安い</span>'
+        )
+    lo = min(a.unit_price for a in priced)
+    hi = max(a.unit_price for a in priced)
+    if hi > 0 and (hi - lo) / hi * 100 >= 3:
+        pct = (hi - lo) / hi * 100
+        return (
+            '<span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">'
+            f'選び方で最大 {pct:.0f}% 差</span>'
+        )
+    return ""
+
+
 def render_series_groups(analyses: list[ProductAnalysis]) -> str:
     """『カテゴリ → シリーズ』でまとめ、同シリーズ内のバリエーションを並べて表示する。"""
     cat_order = {key: i for i, (key, _) in enumerate(CATEGORIES.items())}
@@ -1380,14 +1444,16 @@ def render_series_groups(analyses: list[ProductAnalysis]) -> str:
             f'<span class="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">🏭 {html.escape(maker)}</span>'
             if maker else ""
         )
+        insight = series_insight_badge(items)
         cards = "\n".join(render_card(a) for a in items)
         cols = "sm:grid-cols-2 xl:grid-cols-3" if n >= 3 else ("sm:grid-cols-2" if n == 2 else "")
         blocks.append(
-            f'<section class="series-block mb-8" data-category="{html.escape(tab_key)}">'
+            f'<section class="series-block mb-8" data-category="{html.escape(tab_key)}" data-maker="{html.escape(maker)}">'
             f'<div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 pb-2 border-b-2 border-{accent}-100">'
             f'<h3 class="text-lg font-black text-gray-900">{html.escape(series)}</h3>'
             f'{maker_chip}'
             f'<span class="text-[11px] text-gray-400">{html.escape(ui["label"])} ・ {n}種類</span>'
+            f'{insight}'
             f'<span class="ml-auto">{cheapest_txt}</span>'
             '</div>'
             f'<div class="grid gap-5 {cols}">{cards}</div>'
@@ -1403,7 +1469,13 @@ def generate_html(analyses: list[ProductAnalysis], out: Path = DEFAULT_HTML_PATH
     drop_band = render_price_drop_band(analyses)
     best = render_best_buys_section(analyses)
     variants = render_variant_compare_section(analyses)
-    tabs = render_category_tabs()
+    maker_counts: dict[str, int] = {}
+    for a in analyses:
+        mk = a.snapshot.target.maker
+        if mk:
+            maker_counts[mk] = maker_counts.get(mk, 0) + 1
+    makers = [mk for mk, _ in sorted(maker_counts.items(), key=lambda kv: (-kv[1], kv[0]))]
+    tabs = render_category_tabs(makers)
     filler = render_filler_section()
     priced = sum(1 for a in analyses if a.unit_price is not None)
     page_url = site_url()
