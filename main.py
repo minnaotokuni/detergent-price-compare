@@ -55,11 +55,12 @@ SCHEDULE_SLOTS: tuple[tuple[str, str, int], ...] = (
 DIGEST_DEFAULT_HASHTAGS = "#日用品 #節約 #PR"
 
 DIGEST_LLM_INSTRUCTION = (
-    "以下の入力データ（各商品の楽天24価格と買い時判定）を元に、"
-    "主婦・主夫層が『楽天24でまとめ買いして送料無料ライン（3980円）を突破したくなる』ような、"
-    "バイヤー推奨の仕入れ速報ツイートの【本文】を書いてください（140文字以内・厳守）。"
-    "トーン例: 「楽天24で洗剤まとめ買いしてる主婦・主夫さん、必見！アタックZERO激アツ最安値！"
-    "送料無料ライン超え間違いなし！他の商品も激安価格♪」のように、送料無料ライン・激アツ商品名を具体的に。"
+    "以下の入力データ（内容量あたりの単価＝円/100g・円/100ml と、本体vs詰め替えの比較）を元に、"
+    "洗剤・日用品を『内容量あたりの単価』で客観的に比べられる比較サイトの【告知ツイート本文】を書いてください"
+    "（140文字以内・厳守）。読者に役立つ具体的な数字を1つ入れ、誠実で落ち着いたトーンにする。"
+    "誇大表現（激アツ・最安値保証・買うべき等の断定や煽り）は使わない。"
+    "例の方向性: 「洗剤って詰め替えが必ず得とは限りません。例えばNANOX oneは本体の方が約17%割安。"
+    "内容量あたりの単価（円/100g）で横並び比較できます」。"
     "ハッシュタグとURLはシステムが末尾に付けるので本文には書かない。"
     "出力は投稿本文のみ。余計な説明・引用符は不要。"
 )
@@ -1636,55 +1637,60 @@ def finalize_digest_tweet(text: str) -> str:
 
 
 def rakuten24_summary_line(analysis: ProductAnalysis) -> str:
-    """LLM素材用: 楽天24の1回あたり単価と買い時シグナル。"""
-    r24 = analysis.snapshot.offers.get(RAKUTEN24.key) or analysis.snapshot.visible_offers.get(
-        RAKUTEN24.key
-    )
+    """LLM素材用: 内容量あたりの単価（客観指標）を中心に1行化。"""
     name = analysis.snapshot.target.display_name
-    if r24 and r24.price_per_use is not None:
-        unit = r24.use_unit_label or "1回"
-        return f"{name} | 楽天24 ¥{r24.price_per_use:.1f}/{unit} | {analysis.signal.label}"
-    if r24 and r24.price is not None:
-        return f"{name} | 楽天24 本体¥{r24.price:,} | {analysis.signal.label}"
-    return f"{name} | 楽天24価格未取得 | {analysis.signal.label}"
+    if analysis.unit_price is not None:
+        return f"{name} | ¥{analysis.unit_price:.1f}/{analysis.unit_basis or '100g'}"
+    return f"{name} | 価格未取得"
+
+
+def _variant_insights(analyses: list[ProductAnalysis]) -> list[str]:
+    """本体 vs 詰め替えの比較事実を文章化（誠実な具体ネタ）。"""
+    groups: dict[str, dict[str, ProductAnalysis]] = {}
+    for a in analyses:
+        g, vt = a.snapshot.target.variant_group, a.snapshot.target.variant_type
+        if g and vt and a.unit_price is not None:
+            groups.setdefault(g, {})[vt] = a
+    out: list[str] = []
+    for members in groups.values():
+        main, refill = members.get("main"), members.get("refill")
+        if not main or not refill or main.unit_price == refill.unit_price:
+            continue
+        series = main.snapshot.target.series or main.snapshot.target.display_name
+        if refill.unit_price < main.unit_price:
+            pct = (main.unit_price - refill.unit_price) / main.unit_price * 100
+            out.append(f"{series}: 詰め替えが本体より約{pct:.0f}%割安")
+        else:
+            pct = (refill.unit_price - main.unit_price) / refill.unit_price * 100
+            out.append(f"{series}: 本体の方が詰め替えより約{pct:.0f}%割安（詰替が必ず得とは限らない）")
+    return out
 
 
 def build_digest_material(analyses: list[ProductAnalysis], slot_label: str) -> str:
-    """全商品の価格・買い時をカテゴリ別にまとめたLLM入力素材（Pythonのみ・無料）。"""
+    """単位価格のベストバイと本体vs詰替の事実をまとめたLLM入力素材（Pythonのみ・無料）。"""
     lines = [
         f"配信枠: {slot_label}",
         f"対象商品数: {len(analyses)}",
-        f"送料無料ライン: ¥{FREE_SHIPPING_THRESHOLD:,}",
+        "比較指標: 内容量あたりの単価（円/100g・円/100ml）。価格は楽天24から取得。",
         f"比較サイトURL: {site_url()}",
         "",
+        "【カテゴリ別 単価最安（ベストバイ）】",
     ]
-    hot = [
-        a
-        for a in analyses
-        if "最安" in a.signal.label or "買い時" in a.signal.label
-    ]
-    if hot:
-        lines.append("【今すぐ買い推奨】")
-        lines.extend(rakuten24_summary_line(a) for a in hot)
+    for cat_key in ("laundry_liquid", "laundry_powder", "fabric_softener", "dish", "bath_toilet", "body_soap"):
+        cands = [a for a in analyses if a.snapshot.target.category_key == cat_key and a.unit_price is not None]
+        if not cands:
+            continue
+        best = min(cands, key=lambda a: a.unit_price or math.inf)
+        cat = CATEGORIES.get(cat_key)
+        cat_name = cat.display_name if cat else cat_key
+        lines.append(
+            f"{cat_name}: {best.snapshot.target.display_name} ¥{best.unit_price:.1f}/{best.unit_basis}"
+        )
+    insights = _variant_insights(analyses)
+    if insights:
         lines.append("")
-
-    by_category: dict[str, list[ProductAnalysis]] = {}
-    for analysis in analyses:
-        cat = CATEGORIES.get(analysis.snapshot.target.category_key)
-        cat_name = cat.display_name if cat else analysis.snapshot.target.category_key
-        by_category.setdefault(cat_name, []).append(analysis)
-
-    for cat_name, items in by_category.items():
-        lines.append(f"■ {cat_name} ({len(items)}品)")
-        for analysis in items:
-            lines.append(rakuten24_summary_line(analysis))
-        lines.append("")
-
-    wait = [a for a in analyses if "待ち" in a.signal.label or "取得待ち" in a.signal.label]
-    if wait:
-        lines.append(f"【価格取得待ち {len(wait)}品】")
-        for analysis in wait[:5]:
-            lines.append(f"- {analysis.snapshot.target.display_name}")
+        lines.append("【本体 vs 詰め替えの検証事実】")
+        lines.extend(insights)
     return "\n".join(lines).strip()
 
 
@@ -1807,35 +1813,48 @@ def call_digest_llm(material: str, slot_label: str) -> str:
     return finalize_digest_tweet(raw)
 
 
-def build_digest_tweet_fallback(analyses: list[ProductAnalysis], slot_label: str) -> str:
-    """LLM不可時のローカルまとめ（dry-run確認用フォールバック）。"""
-    url = site_url()
-    hot = [
-        a
-        for a in analyses
-        if "最安" in a.signal.label or "買い時" in a.signal.label
-    ][:4]
-    picks = hot or analyses[:4]
-    header = f"【{slot_label}まとめ】"
-    suffix = f"全{len(analyses)}品→{url}"
-    item_bits: list[str] = []
-    budget = X_CHAR_LIMIT - len(header) - len(suffix) - 2
-    for analysis in picks:
-        name = analysis.snapshot.target.display_name
-        if len(name) > 10:
-            name = name[:9] + "…"
-        r24 = analysis.snapshot.offers.get(RAKUTEN24.key)
-        if r24 and r24.price_per_use is not None:
-            bit = f"{name}¥{r24.price_per_use:.0f}"
-        elif r24 and r24.price is not None:
-            bit = f"{name}¥{r24.price}"
-        else:
+def _series_short(name: str) -> str:
+    return name.split(" ")[0][:12]
+
+
+def _variant_insights_short(analyses: list[ProductAnalysis]) -> list[str]:
+    """本体 vs 詰替の比較を、ツイート向けの短い完結文にする。"""
+    groups: dict[str, dict[str, ProductAnalysis]] = {}
+    for a in analyses:
+        g, vt = a.snapshot.target.variant_group, a.snapshot.target.variant_type
+        if g and vt and a.unit_price is not None:
+            groups.setdefault(g, {})[vt] = a
+    surprises: list[str] = []  # 本体の方が安い（意外性大）
+    normals: list[str] = []
+    for members in groups.values():
+        main, refill = members.get("main"), members.get("refill")
+        if not main or not refill or main.unit_price == refill.unit_price:
             continue
-        sep = 1 if item_bits else 0
-        if sum(len(b) for b in item_bits) + sep + len(bit) > budget:
-            break
-        item_bits.append(bit)
-    body = " ".join([header, *item_bits, suffix])
+        series = (main.snapshot.target.series or "").strip()
+        if refill.unit_price < main.unit_price:
+            pct = (main.unit_price - refill.unit_price) / main.unit_price * 100
+            normals.append(f"{series}は詰め替えが約{pct:.0f}%お得")
+        else:
+            pct = (refill.unit_price - main.unit_price) / refill.unit_price * 100
+            surprises.append(f"{series}は本体が約{pct:.0f}%割安")
+    return surprises + normals
+
+
+def build_digest_tweet_fallback(analyses: list[ProductAnalysis], slot_label: str) -> str:
+    """LLM不可時のローカルまとめ（誠実・単位価格ベース・字数最適化）。"""
+    insights = _variant_insights_short(analyses)
+    if insights:
+        body = f"詰め替えが必ずお得とは限りません。{insights[0]}。内容量あたりの単価で客観比較できます👇"
+        return finalize_digest_tweet(body)
+    bits: list[str] = []
+    for cat_key in ("laundry_liquid", "dish", "fabric_softener"):
+        cands = [a for a in analyses if a.snapshot.target.category_key == cat_key and a.unit_price is not None]
+        if not cands:
+            continue
+        best = min(cands, key=lambda a: a.unit_price or math.inf)
+        bits.append(f"{_series_short(best.snapshot.target.display_name)}¥{best.unit_price:.0f}/{best.unit_basis}")
+    body = "洗剤を内容量あたりの単価で客観比較。今の単価最安は " + "、".join(bits) + " など👇" if bits else \
+        "洗剤・日用品を内容量あたりの単価（円/100g）で客観比較できます👇"
     return finalize_digest_tweet(body)
 
 
@@ -2054,17 +2073,24 @@ def post_due_digest(
     *,
     dry_run: bool,
     use_llm: bool,
+    force: bool = False,
 ) -> bool:
-    """cron 向け: 7時または20時枠のときだけまとめ1件投稿。"""
+    """cron 向け: 7時または20時枠のときだけまとめ1件投稿。force=True で枠時間を無視。"""
     slot = current_digest_slot()
     if slot is None:
-        now = datetime.now()
-        hours = ", ".join(str(h) for _, _, h in SCHEDULE_SLOTS)
-        print(
-            f"[INFO] 投稿枠外 (現在 {now.hour}:{now.minute:02d}, 枠は {hours}時台のみ)",
-            file=sys.stderr,
-        )
-        return False
+        if force:
+            # 時間帯から最も近い枠を選んで即時投稿（手動投稿用）
+            now = datetime.now()
+            slot = SCHEDULE_SLOTS[0] if now.hour < 14 else SCHEDULE_SLOTS[1]
+        else:
+            now = datetime.now()
+            hours = ", ".join(str(h) for _, _, h in SCHEDULE_SLOTS)
+            print(
+                f"[INFO] 投稿枠外 (現在 {now.hour}:{now.minute:02d}, 枠は {hours}時台のみ)。"
+                "今すぐ投稿するには --force を付けてください。",
+                file=sys.stderr,
+            )
+            return False
     slot_id, label, _hour = slot
     return post_digest_slot(
         analyses,
@@ -2204,7 +2230,7 @@ def cmd_post_due(args: argparse.Namespace) -> None:
     if not analyses:
         raise SystemExit("分析対象がありません。先に python main.py refresh を実行してください。")
     use_llm = schedule_use_llm(dry_run=args.dry_run, no_llm=args.no_llm)
-    post_due_digest(analyses, dry_run=args.dry_run, use_llm=use_llm)
+    post_due_digest(analyses, dry_run=args.dry_run, use_llm=use_llm, force=getattr(args, "force", False))
 
 
 def cmd_post(args: argparse.Namespace) -> None:
@@ -2255,6 +2281,7 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--no-fetch", action="store_true", help="CSV最新行のみで素材を作る")
     sp.add_argument("--dry-run", action="store_true")
     sp.add_argument("--no-llm", action="store_true", help="LLMを使わずローカルフォールバック文面")
+    sp.add_argument("--force", action="store_true", help="投稿枠時間(7時/20時)を無視して今すぐ投稿")
     sp.set_defaults(func=cmd_post_due)
     sp = sub.add_parser("post", help="指定商品を1件だけXへ投稿")
     sp.add_argument("--target-id", required=True)
