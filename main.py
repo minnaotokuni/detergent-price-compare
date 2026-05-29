@@ -169,6 +169,8 @@ class TargetProduct:
     size_value: float = 0.0
     size_unit: str = ""
     dose_label: str = ""
+    variant_group: str = ""
+    variant_type: str = ""  # "main" / "refill"
     rakuten_item_code: str = ""
     rakuten_url: str = ""
     sundrug_item_code: str = ""
@@ -557,6 +559,8 @@ def load_targets(path: Path = TARGET_PRODUCTS_PATH) -> list[TargetProduct]:
                 size_value=size_value,
                 size_unit=size_unit,
                 dose_label=str(entry.get("dose_label") or "").strip(),
+                variant_group=str(entry.get("variant_group") or "").strip(),
+                variant_type=str(entry.get("variant_type") or "").strip().lower(),
                 rakuten_item_code=str(entry.get("rakuten_item_code") or "").strip(),
                 rakuten_url=str(entry.get("rakuten_url") or "").strip(),
                 sundrug_item_code=str(entry.get("sundrug_item_code") or "").strip(),
@@ -1117,6 +1121,113 @@ def render_best_buys_section(analyses: list[ProductAnalysis]) -> str:
     )
 
 
+def latest_two_prices(history: tuple[tuple[str, int], ...]) -> tuple[Optional[int], Optional[int]]:
+    """履歴から (最新価格, その1つ前の価格) を返す。"""
+    pts = [p for _, p in history if p is not None]
+    if len(pts) < 2:
+        return (pts[-1] if pts else None), None
+    return pts[-1], pts[-2]
+
+
+def render_price_drop_band(analyses: list[ProductAnalysis]) -> str:
+    """前回取得より値下がりした商品を『値下がり中』として帯で目立たせる。"""
+    drops: list[tuple[ProductAnalysis, int, float]] = []
+    for a in analyses:
+        last, prev = latest_two_prices(a.stats.history)
+        if last is None or prev is None or prev <= 0:
+            continue
+        if last < prev:
+            pct = (prev - last) / prev * 100
+            if pct >= 1:
+                drops.append((a, prev - last, pct))
+    if not drops:
+        return ""
+    drops.sort(key=lambda t: t[2], reverse=True)
+    chips: list[str] = []
+    for a, yen, pct in drops[:6]:
+        r24 = a.snapshot.visible_offers.get(RAKUTEN24.key) or ShopOffer(RAKUTEN24.key, RAKUTEN24.label)
+        name = a.snapshot.target.display_name
+        if len(name) > 22:
+            name = name[:21] + "…"
+        chips.append(
+            '<a href="' + html.escape(r24.url or "#", quote=True) + '" target="_blank" '
+            'rel="nofollow sponsored noopener" '
+            'class="shrink-0 inline-flex items-center gap-2 rounded-xl bg-white/15 hover:bg-white/25 '
+            'backdrop-blur-sm border border-white/20 px-3 py-2 transition-colors">'
+            f'<span class="text-sm font-bold">{html.escape(name)}</span>'
+            f'<span class="text-xs font-black bg-white text-emerald-700 rounded-full px-2 py-0.5">▼{pct:.0f}% (-¥{yen:,})</span>'
+            '</a>'
+        )
+    return (
+        '<section class="max-w-6xl mx-auto px-4 sm:px-6 pt-6">'
+        '<div class="rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 text-white p-4 sm:p-5 shadow-md">'
+        '<div class="flex items-center gap-2 mb-3"><span class="text-xl">📉</span>'
+        f'<h2 class="text-base sm:text-lg font-black">前回より値下がり中（{len(drops)}品）</h2></div>'
+        f'<div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">{"".join(chips)}</div>'
+        '</div></section>'
+    )
+
+
+def render_variant_compare_section(analyses: list[ProductAnalysis]) -> str:
+    """同一ブランドの本体 vs 詰め替えを単価で並べ、本当にお得かを検証する。"""
+    groups: dict[str, dict[str, ProductAnalysis]] = {}
+    for a in analyses:
+        g = a.snapshot.target.variant_group
+        vt = a.snapshot.target.variant_type
+        if g and vt and a.unit_price is not None:
+            groups.setdefault(g, {})[vt] = a
+    rows: list[str] = []
+    for g, members in groups.items():
+        main = members.get("main")
+        refill = members.get("refill")
+        if not main or not refill:
+            continue
+        ui = category_ui(main.snapshot.target.category_key)
+        basis = main.unit_basis or refill.unit_basis
+        cheaper = refill if refill.unit_price <= main.unit_price else main
+        diff = abs(main.unit_price - refill.unit_price)
+        base = max(main.unit_price, refill.unit_price) or 1
+        pct = diff / base * 100
+        if refill.unit_price < main.unit_price:
+            verdict = f'<span class="text-emerald-700 font-black">詰め替えが {pct:.0f}% お得</span>'
+        elif refill.unit_price > main.unit_price:
+            verdict = f'<span class="text-rose-700 font-black">本体の方が {pct:.0f}% 安い</span>'
+        else:
+            verdict = '<span class="text-slate-600 font-black">単価はほぼ同じ</span>'
+
+        def cell(a: ProductAnalysis, label: str) -> str:
+            is_win = a is cheaper
+            ring = "ring-2 ring-emerald-400" if is_win else "border border-gray-100"
+            r24 = a.snapshot.visible_offers.get(RAKUTEN24.key) or ShopOffer(RAKUTEN24.key, RAKUTEN24.label)
+            win = '<span class="text-[10px] font-black text-emerald-600">✓ 単価が安い</span>' if is_win else "&nbsp;"
+            return (
+                f'<a href="{html.escape(r24.url or "#", quote=True)}" target="_blank" rel="nofollow sponsored noopener" '
+                f'class="block rounded-xl bg-white {ring} p-3 hover:shadow-md transition-shadow">'
+                f'<div class="flex items-center justify-between"><span class="text-[11px] font-bold text-gray-500">{label}</span>{win}</div>'
+                f'<p class="text-[11px] text-gray-700 mt-1 leading-snug line-clamp-2 min-h-[2rem]">{html.escape(a.snapshot.target.display_name)}</p>'
+                f'<p class="text-xl font-black text-gray-900 tabular-nums mt-1">{fmt_unit_price(a.unit_price, a.unit_basis)}</p>'
+                f'<p class="text-[10px] text-gray-400 mt-0.5">本体 {fmt_price(r24.price)}</p>'
+                '</a>'
+            )
+
+        brand = main.snapshot.target.display_name.split(" ")[0]
+        rows.append(
+            '<div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">'
+            f'<div class="flex items-center justify-between mb-3"><p class="text-sm font-black text-gray-900">{ui["emoji"]} {html.escape(brand)}</p>{verdict}</div>'
+            f'<div class="grid grid-cols-2 gap-2">{cell(main, "本体")}{cell(refill, "詰め替え")}</div>'
+            '</div>'
+        )
+    if not rows:
+        return ""
+    return (
+        '<section class="max-w-6xl mx-auto px-4 sm:px-6 py-8">'
+        '<div class="mb-4"><h2 class="text-lg sm:text-xl font-black text-gray-900">🔍 本体 vs 詰め替え、本当にお得？</h2>'
+        '<p class="text-xs text-gray-500 mt-0.5">同じ単位価格（円/100g）で比較。詰め替えが必ず安いとは限りません。</p></div>'
+        f'<div class="grid gap-3 sm:grid-cols-2">{"".join(rows)}</div>'
+        '</section>'
+    )
+
+
 def render_filler_section() -> str:
     cards: list[str] = []
     for item in FILLER_ITEMS:
@@ -1236,16 +1347,36 @@ def generate_html(analyses: list[ProductAnalysis], out: Path = DEFAULT_HTML_PATH
     cards = "\n".join(render_card(a) for a in ordered)
     updated = datetime.now().strftime("%Y-%m-%d %H:%M")
     method = render_method_section()
+    drop_band = render_price_drop_band(analyses)
     best = render_best_buys_section(analyses)
+    variants = render_variant_compare_section(analyses)
     tabs = render_category_tabs()
     filler = render_filler_section()
     priced = sum(1 for a in analyses if a.unit_price is not None)
+    page_url = site_url()
+    og_image = page_url.rstrip("/") + "/og-image.png"
+    desc = "洗剤・柔軟剤・食器用洗剤などを内容量あたりの単価（円/100g・円/100ml）で客観比較。楽天24の価格を毎日記録し、価格推移と買い時もチェックできます。"
+    favicon = (
+        "data:image/svg+xml,"
+        "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E"
+        "%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%B4%3C/text%3E%3C/svg%3E"
+    )
     out.write_text(
         f"""<!DOCTYPE html>
 <html lang="ja"><head>
 <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>洗剤・日用品の単価比較 | 内容量あたりで本当に安い1本を探す</title>
-<meta name="description" content="洗剤・柔軟剤・食器用洗剤などを内容量あたりの単価（円/100g・円/100ml）で客観比較。楽天24の価格を毎日記録し、価格推移と買い時もチェックできます。" />
+<meta name="description" content="{html.escape(desc, quote=True)}" />
+<link rel="icon" href="{favicon}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="洗剤・日用品の単価比較 | 内容量あたりで本当に安い1本を探す" />
+<meta property="og:description" content="{html.escape(desc, quote=True)}" />
+<meta property="og:url" content="{html.escape(page_url, quote=True)}" />
+<meta property="og:image" content="{html.escape(og_image, quote=True)}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="洗剤・日用品の単価比較" />
+<meta name="twitter:description" content="{html.escape(desc, quote=True)}" />
+<meta name="twitter:image" content="{html.escape(og_image, quote=True)}" />
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
@@ -1265,8 +1396,10 @@ def generate_html(analyses: list[ProductAnalysis], out: Path = DEFAULT_HTML_PATH
     </div>
   </div>
 </header>
+{drop_band}
 {method}
 {best}
+{variants}
 {tabs}
 <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
 <h2 class="text-lg font-black text-gray-800 mb-1">全商品一覧（カテゴリ別・単価の安い順）</h2>
