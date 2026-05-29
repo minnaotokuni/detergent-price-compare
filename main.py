@@ -76,6 +76,7 @@ CSV_COLUMNS = [
     "サンドラッグ_1回あたり",
     "爽快ドラッグ_1回あたり",
     "最安_1回あたり",
+    "楽天24URL",
 ]
 
 
@@ -365,7 +366,12 @@ def warn_high_per_use(target: TargetProduct, offer: ShopOffer) -> None:
 
 
 def shop_product_search_url(target: TargetProduct, shop: ShopConfig) -> str:
-    """価格取得失敗時に表示する「店内で探す」リンク。価格取得には使わない。"""
+    """価格取得失敗時に表示する「店内で探す」リンク。価格取得には使わない。
+
+    注: itemCode の番号と商品ページURLの番号は一致しないため、URLを自前で
+    組み立てると404になる。正しい商品URLは API の itemUrl/affiliateUrl のみで、
+    それは CSV (楽天24URL列) に保存して再利用する。ここは最終フォールバックの検索リンク。
+    """
     keyword = target.search_keyword or target.display_name or target.jan
     if shop.key == RAKUTEN24.key:
         return rakuten24_shop_search_url(keyword)
@@ -425,6 +431,8 @@ def append_history(snapshots: list[TodaySnapshot], path: Path = PRICE_HISTORY_CS
             else:
                 row[shop.per_use_csv_column] = ""
         row[PER_USE_BEST_COLUMN] = f"{min(per_use_values):.1f}" if per_use_values else ""
+        r24_offer = snapshot.offers.get(RAKUTEN24.key)
+        row["楽天24URL"] = r24_offer.url if (r24_offer and r24_offer.url) else ""
         new_rows.append(row)
 
     existing_rows = read_history(path)
@@ -2161,6 +2169,11 @@ def analyses_from_latest_history() -> list[ProductAnalysis]:
                 price_per_use=parse_per_use(row.get(shop.per_use_csv_column)),
                 use_unit_label=unit_label,
             )
+            # 楽天24は API で取得した正規URL(CSV保存)を優先（検索URLや404を避ける）
+            if shop.key == RAKUTEN24.key:
+                saved_url = (row.get("楽天24URL") or "").strip()
+                if saved_url:
+                    offer.url = saved_url
             enrich_offer(offer, target, shop)
             offers[shop.key] = offer
         snapshot = TodaySnapshot(target, offers, dict(offers))
